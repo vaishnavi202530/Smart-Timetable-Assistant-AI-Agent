@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Timetable Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12162B;
+    --surface: #1B2140;
+    --surface-2: #222a4d;
+    --line: #323a68;
+    --text: #EDEFFB;
+    --muted: #9BA3C9;
+    --amber: #F2B94D;
+    --teal: #5FD4C4;
+    --rose: #E88A9A;
+    --radius: 10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #1c2350 0%, transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+  header{
+    padding:28px 32px 16px;
+    border-bottom:1px solid var(--line);
+  }
+  header .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:6px;
+  }
+  header h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:30px;
+    margin:0;
+    letter-spacing:-.01em;
+  }
+  header p{
+    color:var(--muted);
+    margin:6px 0 0;
+    font-size:14px;
+  }
+  main{
+    flex:1;
+    display:grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap:0;
+    min-height:0;
+  }
+  @media (max-width: 980px){
+    main{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Timetable panel ---------- */
+  .tt-panel{
+    padding:24px 28px 40px;
+    overflow:auto;
+    border-right:1px solid var(--line);
+  }
+  .tt-controls{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  select, button{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    background:var(--surface);
+    color:var(--text);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:9px 14px;
+  }
+  button{
+    cursor:pointer;
+    background:var(--amber);
+    color:#1c1608;
+    font-weight:600;
+    border:none;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button:hover{ transform:translateY(-1px); box-shadow:0 4px 14px rgba(242,185,77,.25); }
+  button.secondary{
+    background:var(--surface);
+    color:var(--text);
+    border:1px solid var(--line);
+    font-weight:500;
+  }
+  button.secondary:hover{ box-shadow:none; border-color:var(--teal); }
+  #status-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-bottom:16px;
+    min-height:16px;
+  }
+
+  .grid-wrap{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.tt-grid{
+    border-collapse:collapse;
+    width:100%;
+    table-layout:fixed;
+  }
+  table.tt-grid th, table.tt-grid td{
+    border:1px solid var(--line);
+    padding:0;
+    vertical-align:top;
+  }
+  table.tt-grid thead th{
+    background:var(--surface-2);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    padding:10px 8px;
+    text-align:left;
+  }
+  table.tt-grid thead th.period-col{
+    width:64px;
+    text-align:center;
+  }
+  table.tt-grid tbody th{
+    background:var(--surface);
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--amber);
+    font-size:13px;
+    text-align:center;
+    width:64px;
+  }
+  .cell{
+    min-height:64px;
+    padding:6px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .card{
+    background:var(--surface-2);
+    border-left:3px solid var(--teal);
+    border-radius:6px;
+    padding:6px 8px;
+    font-size:12.5px;
+    line-height:1.35;
+  }
+  .card.lab{ border-left-color:var(--rose); }
+  .card .course{ font-weight:600; }
+  .card .meta{ color:var(--muted); font-size:11px; margin-top:2px; }
+  .empty-cell{ color:#454d78; font-size:11px; text-align:center; padding-top:20px; }
+
+  /* ---------- Chat panel ---------- */
+  .chat-panel{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
+  .chat-eyebrow{
+    padding:20px 24px 0;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--teal);
+  }
+  #chat-log{
+    flex:1;
+    overflow-y:auto;
+    padding:12px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .msg{
+    max-width:92%;
+    padding:10px 13px;
+    border-radius:10px;
+    font-size:13.8px;
+    line-height:1.5;
+    white-space:pre-wrap;
+  }
+  .msg.user{
+    align-self:flex-end;
+    background:var(--amber);
+    color:#1c1608;
+    font-weight:500;
+    border-bottom-right-radius:2px;
+  }
+  .msg.agent{
+    align-self:flex-start;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-bottom-left-radius:2px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.8px;
+  }
+  .msg.agent .intent-tag{
+    display:block;
+    color:var(--teal);
+    font-size:10.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  form#chat-form{
+    display:flex;
+    gap:8px;
+    padding:16px 24px 22px;
+    border-top:1px solid var(--line);
+  }
+  #chat-input{
+    flex:1;
+    padding:11px 14px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--text);
+    font-size:14px;
+  }
+  #chat-input:focus, select:focus, button:focus{
+    outline:2px solid var(--teal);
+    outline-offset:1px;
+  }
+  .suggestions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:0 24px 14px;
+  }
+  .chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:5px 11px;
+    cursor:pointer;
+  }
+  .chip:hover{ border-color:var(--teal); color:var(--text); }
+
+  @media (prefers-reduced-motion: reduce){
+    button{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Agentic AI · Sense → Think → Act</div>
+  <h1>Smart Timetable Assistant</h1>
+  <p>A CSP-solving scheduling agent for your department. Generate a clash-free timetable, then ask it anything.</p>
+</header>
+
+<main>
+  <section class="tt-panel">
+    <div class="tt-controls">
+      <button id="generate-btn">Generate timetable</button>
+      <select id="section-select">
+        {% for s in sections %}
+        <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="secondary" id="view-section-btn">View section grid</button>
+      <button class="secondary" id="conflicts-btn">Check conflicts</button>
+    </div>
+    <div id="status-line">No timetable generated yet — click "Generate timetable" to run the scheduling agent.</div>
+    <div class="grid-wrap">
+      <table class="tt-grid" id="tt-table">
+        <thead><tr><th class="period-col">Period</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="chat-panel">
+    <div class="chat-eyebrow">Ask the agent</div>
+    <div id="chat-log"></div>
+    <div class="suggestions">
+      <div class="chip" data-msg="generate the timetable">generate the timetable</div>
+      <div class="chip" data-msg="show schedule for CSE-A">schedule for CSE-A</div>
+      <div class="chip" data-msg="find free slot for Dr. Sharma">free slot for Dr. Sharma</div>
+      <div class="chip" data-msg="check conflicts">check conflicts</div>
+      <div class="chip" data-msg="help">help</div>
+    </div>
+    <form id="chat-form">
+      <input id="chat-input" autocomplete="off" placeholder="e.g. reschedule Data Structures for CSE-A from Monday period 2 to Wednesday period 5" />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+</main>
+
+<script>
+const chatLog = document.getElementById('chat-log');
+const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
+const statusLine = document.getElementById('status-line');
+const table = document.getElementById('tt-table');
+const sectionSelect = document.getElementById('section-select');
+
+function addMessage(role, text, intent){
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  if(role === 'agent' && intent){
+    const tag = document.createElement('span');
+    tag.className = 'intent-tag';
+    tag.textContent = intent;
+    div.appendChild(tag);
+  }
+  div.appendChild(document.createTextNode(text));
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+async function sendMessage(text){
+  addMessage('user', text);
+  chatInput.value = '';
+  try{
+    const res = await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({message: text})
+    });
+    const data = await res.json();
+    addMessage('agent', data.response, data.intent);
+    if(data.intent === 'GENERATE_TIMETABLE'){
+      loadGrid();
+    }
+  }catch(err){
+    addMessage('agent', 'Connection error talking to the agent.', 'ERROR');
+  }
+}
+
+chatForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = chatInput.value.trim();
+  if(text) sendMessage(text);
+});
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => sendMessage(chip.dataset.msg));
+});
+
+document.getElementById('generate-btn').addEventListener('click', () => sendMessage('generate the timetable'));
+document.getElementById('conflicts-btn').addEventListener('click', () => sendMessage('check conflicts'));
+document.getElementById('view-section-btn').addEventListener('click', () => {
+  renderSectionGrid(sectionSelect.value);
+});
+
+async function loadGrid(){
+  const res = await fetch('/api/timetable');
+  const data = await res.json();
+  window._ttData = data;
+  renderSectionGrid(sectionSelect.value || data.sections[0]);
+  statusLine.textContent = `Timetable ready — ${data.sections.length} section(s), ${data.days.length} days, ${data.periods.length} periods/day.`;
+}
+
+function renderSectionGrid(sectionId){
+  const data = window._ttData;
+  if(!data) return;
+  const thead = table.querySelector('thead tr');
+  thead.innerHTML = '<th class="period-col">Period</th>' + data.days.map(d => `<th>${d}</th>`).join('');
+
+  const tbody = table.querySelector('tbody');
+  tbody.innerHTML = '';
+  data.periods.forEach(p => {
+    const tr = document.createElement('tr');
+    let row = `<th>P${p}</th>`;
+    data.days.forEach(day => {
+      const entries = (data.grid[day][p] || []).filter(e => e.section === sectionId);
+      if(entries.length === 0){
+        row += `<td><div class="cell"><div class="empty-cell">—</div></div></td>`;
+      } else {
+        const cards = entries.map(e => {
+          const isLab = /lab/i.test(e.course);
+          return `<div class="card ${isLab ? 'lab' : ''}">
+                    <div class="course">${e.course}</div>
+                    <div class="meta">${e.teacher_name} · ${e.room}</div>
+                  </div>`;
+        }).join('');
+        row += `<td><div class="cell">${cards}</div></td>`;
+      }
+    });
+    tr.innerHTML = row;
+    tbody.appendChild(tr);
+  });
+}
+
+// Initial greeting
+addMessage('agent', "Hi! I'm your timetable agent. Click \"Generate timetable\" or ask me something below.", 'READY');
+loadGrid().catch(()=>{});
+</script>
+
+</body>
+</html>

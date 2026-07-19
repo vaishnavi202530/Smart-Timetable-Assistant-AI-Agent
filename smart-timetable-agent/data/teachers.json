@@ -1,0 +1,10 @@
+[
+  {"id": "T01", "name": "Dr. A. Sharma", "subjects": ["Data Structures", "Algorithms"]},
+  {"id": "T02", "name": "Prof. R. Iyer", "subjects": ["Operating Systems", "Computer Networks"]},
+  {"id": "T03", "name": "Dr. S. Kulkarni", "subjects": ["Database Systems", "DBMS Lab"]},
+  {"id": "T04", "name": "Prof. M. Deshpande", "subjects": ["Artificial Intelligence", "Machine Learning"]},
+  {"id": "T05", "name": "Dr. N. Verma", "subjects": ["Mathematics-III", "Discrete Structures"]},
+  {"id": "T06", "name": "Prof. K. Rao", "subjects": ["Software Engineering", "Web Technology"]},
+  {"id": "T07", "name": "Dr. P. Nair", "subjects": ["OS Lab", "Networks Lab"]},
+  {"id": "T08", "name": "Prof. J. Singh", "subjects": ["AI Lab", "Web Tech Lab"]}
+]

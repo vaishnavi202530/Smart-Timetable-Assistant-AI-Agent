@@ -1,0 +1,41 @@
+[
+  {
+    "id": "CSE-A",
+    "strength": 65,
+    "courses": [
+      {"course": "Data Structures", "teacher": "T01", "type": "lecture", "sessions_per_week": 4},
+      {"course": "Operating Systems", "teacher": "T02", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Database Systems", "teacher": "T03", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Artificial Intelligence", "teacher": "T04", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Mathematics-III", "teacher": "T05", "type": "lecture", "sessions_per_week": 3},
+      {"course": "DBMS Lab", "teacher": "T03", "type": "lab", "sessions_per_week": 2},
+      {"course": "OS Lab", "teacher": "T07", "type": "lab", "sessions_per_week": 2}
+    ]
+  },
+  {
+    "id": "CSE-B",
+    "strength": 60,
+    "courses": [
+      {"course": "Algorithms", "teacher": "T01", "type": "lecture", "sessions_per_week": 4},
+      {"course": "Computer Networks", "teacher": "T02", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Software Engineering", "teacher": "T06", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Machine Learning", "teacher": "T04", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Discrete Structures", "teacher": "T05", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Networks Lab", "teacher": "T07", "type": "lab", "sessions_per_week": 2},
+      {"course": "AI Lab", "teacher": "T08", "type": "lab", "sessions_per_week": 2}
+    ]
+  },
+  {
+    "id": "CSE-C",
+    "strength": 58,
+    "courses": [
+      {"course": "Web Technology", "teacher": "T06", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Database Systems", "teacher": "T03", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Operating Systems", "teacher": "T02", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Mathematics-III", "teacher": "T05", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Artificial Intelligence", "teacher": "T04", "type": "lecture", "sessions_per_week": 3},
+      {"course": "Web Tech Lab", "teacher": "T08", "type": "lab", "sessions_per_week": 2},
+      {"course": "DBMS Lab", "teacher": "T03", "type": "lab", "sessions_per_week": 2}
+    ]
+  }
+]

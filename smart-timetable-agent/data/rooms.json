@@ -1,0 +1,7 @@
+[
+  {"id": "R101", "type": "classroom", "capacity": 70},
+  {"id": "R102", "type": "classroom", "capacity": 70},
+  {"id": "R103", "type": "classroom", "capacity": 60},
+  {"id": "LAB1", "type": "lab", "capacity": 35},
+  {"id": "LAB2", "type": "lab", "capacity": 35}
+]
